@@ -38,19 +38,30 @@ def paadas():
     f = open("play.wav", "rb")
     return send_file(f, mimetype="audio/wav")
 
-    #Approach 2: not working
-    #def generate(files):
-    #    for file in files:
-    #        yield file.read()
+    #Approach 2
+    def generate(files):
+        with wave.open(files[0], 'rb') as f:
+            params = f.getparams()
+            frames = f.readframes(f.getnframes())
+        
+        for file in files[1:]:
+            with wave.open(file, 'rb') as f:
+                frames += f.readframes(f.getnframes())
+        
+        buffer = io.BytesIO()
+        with wave.open(buffer, 'wb') as f:
+            f.setparams(params)
+            f.writeframes(frames)
+        
+        buffer.seek(0)
+        return buffer.read()
 
-    #files = []
-    #number = random.randint(1,10)
-    #f1 = open("../numbers/" + str(number) + ".wav", 'rb')
-    #files.append(f1)
-    #times = random.randint(1,10)
-    #f2 = open("../times/" + str(times) + ".wav", 'rb')
-    #files.append(f2)
-    #return Response(generate(files), mimetype='audio/wav')
+    files = []
+    number = random.randint(1,10)
+    files.append("../numbers/" + str(number) + ".wav")
+    times = random.randint(1,10)
+    files.append("../times/" + str(times) + ".wav")
+    return Response(generate(files), mimetype='audio/wav')
 
     #Approach 3: not working
     # @after_this_request
