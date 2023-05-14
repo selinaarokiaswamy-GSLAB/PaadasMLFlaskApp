@@ -37,8 +37,8 @@ def paadas():
     files.append("../numbers/" + str(number) + ".wav")
     times = random.randint(1,10)
     files.append("../times/" + str(times) + ".wav")
-    return Response(generate(files), mimetype='audio/wav')
- 
+    return render_template("index.html", source=generate(files))
+   
 # main driver function
 if __name__ == '__main__':
  
