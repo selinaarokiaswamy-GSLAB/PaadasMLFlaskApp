@@ -1,7 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, send_file, Response
-# Response, send_file, after_this_request
+from flask import Flask, Response
 import random
 import time
 import wave
@@ -16,29 +15,6 @@ app = Flask(__name__)
 @app.route('/')
 # ‘/’ URL is bound with paadas() function.
 def paadas():
-    # Approach1: working
-    number = random.randint(1,10)
-    f1 = "../numbers/" + str(number) + ".wav"
-    times = random.randint(1,10)
-    f2 = "../times/" + str(times) + ".wav"
-    infiles = [f1, f2]
-    outfile = "play.wav"
-
-    data= []
-    for infile in infiles:
-        w = wave.open(infile, 'rb')
-        data.append( [w.getparams(), w.readframes(w.getnframes())] )
-        w.close()
-    
-    output = wave.open(outfile, 'wb')
-    output.setparams(data[0][0])
-    for i in range(len(data)):
-        output.writeframes(data[i][1])
-    output.close()
-    f = open("play.wav", "rb")
-    return send_file(f, mimetype="audio/wav")
-
-    #Approach 2
     def generate(files):
         with wave.open(files[0], 'rb') as f:
             params = f.getparams()
@@ -62,16 +38,6 @@ def paadas():
     times = random.randint(1,10)
     files.append("../times/" + str(times) + ".wav")
     return Response(generate(files), mimetype='audio/wav')
-
-    #Approach 3: not working
-    # @after_this_request
-    # def times(response):
-    #    times = random.randint(1,10)
-    #    f = open("../times/" + str(times) + ".wav", 'rb')
-        #return response
-    #    time.sleep(1)
-    #    return send_file(f, mimetype="audio/wav")
-    # return send_file(f, mimetype="audio/wav")
  
 # main driver function
 if __name__ == '__main__':
