@@ -37,9 +37,9 @@ def paadas():
 
     files = []
     number = random.randint(1,10)
-    files.append("../numbers/" + str(number) + ".wav")
+    files.append("./numbers/" + str(number) + ".wav")
     times = random.randint(1,10)
-    files.append("../times/" + str(times) + ".wav")
+    files.append("./times/" + str(times) + ".wav")
     data = dict(
         file=(generate(files), "padaa.wav"),
     )
