@@ -16,6 +16,10 @@ app = Flask(__name__)
 # the associated function.
 # ‘/’ URL is bound with index() function.
 @app.route('/')
+def index():
+    return render_template("index.html")
+
+@app.route('/paadas')
 def paadas():
     #Approach 2
     def generate(files):
@@ -50,11 +54,11 @@ def paadas():
     if os.path.isfile('./padaa.wav'):
         print("./padaa.wav exists")
     #app.post(url_for('static', filename='padaa.wav'), content_type='multipart/form-data', data=data)
-    return render_template("index.html", source=padaa)
-    #return Response(padaa, mimetype='audio/wav')
+    #return render_template("index.html", source=padaa)
+    return Response(padaa, mimetype='audio/wav')
 
 @app.route("/recording", methods=['POST', 'GET'])
-def index():
+def check_answer():
     if request.method == "POST":
         f = open('./file.wav', 'wb')
         f.write(request.data)
