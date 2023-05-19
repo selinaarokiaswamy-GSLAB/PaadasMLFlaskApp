@@ -40,19 +40,23 @@ def paadas():
     files.append("./numbers/" + str(number) + ".wav")
     times = random.randint(1,10)
     files.append("./times/" + str(times) + ".wav")
-    data = dict(
-        file=(generate(files), "padaa.wav"),
-    )
-
+    #data = dict(
+    #    file=(generate(files), "padaa.wav"),
+    #)
+    padaa = generate(files)
+    f = open('./padaa.wav', 'wb')
+    f.write(padaa)
+    f.close()
+    if os.path.isfile('./padaa.wav'):
+        print("./padaa.wav exists")
     #app.post(url_for('static', filename='padaa.wav'), content_type='multipart/form-data', data=data)
-    print ('posted data on client\n')
-    return render_template("index.html")
+    return render_template("index.html", source=padaa)
+    #return Response(padaa, mimetype='audio/wav')
 
 @app.route("/recording", methods=['POST', 'GET'])
 def index():
     if request.method == "POST":
         f = open('./file.wav', 'wb')
-        print(request)
         f.write(request.data)
         f.close()
         if os.path.isfile('./file.wav'):
@@ -67,4 +71,4 @@ if __name__ == '__main__':
  
     # run() method of Flask class runs the application
     # on the local development server.
-    app.run()
+    app.run(debug=True)
