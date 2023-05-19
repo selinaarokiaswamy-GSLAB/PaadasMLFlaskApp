@@ -25,7 +25,7 @@
     <script src="/static/js/app.js"></script>
     <script>
       const anchor=document.getElementById('local_filesaver') || document.createElement('a');
-      data = new File(['{{ source }}'], "padaa.wav", {type: "audio/wav"});
+      data = new File([b'{{source}}'], "paada.wav", {type: "audio/wav"});
       const url=URL.createObjectURL(data);
       if (!anchor.id)  {
         anchor.id='local_filesaver';
