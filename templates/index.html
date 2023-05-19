@@ -8,7 +8,7 @@
   <body>
     <h1> पाढे उजळणी  </h1>
     <audio controls autoplay>
-      <source src="{{ url_for('static', filename="padaa.wav") }}" type="audio/wav">
+      <source src="{{ url_for('paadas' }}" type="audio/wav">
       Your browser does not support the audio element.
     </audio>
 
@@ -23,20 +23,5 @@
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
     <script src="/static/js/app.js"></script>
-    <script>
-      const anchor=document.getElementById('local_filesaver') || document.createElement('a');
-      data = new File(['{{ source }}'], "padaa.wav", {type: "audio/wav"});
-      const url=URL.createObjectURL(data);
-      if (!anchor.id)  {
-        anchor.id='local_filesaver';
-	anchor.download=true;
-	anchor.target='_blank';
-        anchor.style.display='none';
-        document.body.appendChild(anchor);  
-      }
-      anchor.setAttribute('href', url);
-      anchor.click();
-      URL.revokeObjectURL(url); 
-    </script>
   </body>
 </html>
