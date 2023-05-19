@@ -1,6 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, send_file, Response, render_template, redirect, url_for, request
+from flask import Flask, Response, render_template, request, session
 import random
 import time
 import wave
@@ -10,6 +10,7 @@ import os
 # Flask constructor takes the name of
 # current module (__name__) as argument.
 app = Flask(__name__)
+app.secret_key = "Sameer"
  
 # The route() function of the Flask class is a decorator,
 # which tells the application which URL should call
@@ -17,7 +18,9 @@ app = Flask(__name__)
 # ‘/’ URL is bound with index() function.
 @app.route('/')
 def index():
-    return render_template("index.html")
+    session["number"] = random.randint(1,10)
+    session["times"] = random.randint(1,10)
+    return render_template("index.html", number=session["number"], times=session["times"])
 
 @app.route('/paadas')
 def paadas():
@@ -40,27 +43,23 @@ def paadas():
         return buffer.read()
 
     files = []
-    number = random.randint(1,10)
+    number = session["number"]
     files.append("./numbers/" + str(number) + ".wav")
-    times = random.randint(1,10)
+    times = session["times"]
     files.append("./times/" + str(times) + ".wav")
     #data = dict(
     #    file=(generate(files), "padaa.wav"),
     #)
-    padaa = generate(files)
-    f = open('./padaa.wav', 'wb')
-    f.write(padaa)
-    f.close()
-    if os.path.isfile('./padaa.wav'):
-        print("./padaa.wav exists")
+
     #app.post(url_for('static', filename='padaa.wav'), content_type='multipart/form-data', data=data)
-    #return render_template("index.html", source=padaa)
-    return Response(padaa, mimetype='audio/wav')
+    return Response(generate(files), mimetype='audio/wav')
+    #return render_template("index.html", source=generate(files))
 
 @app.route("/recording", methods=['POST', 'GET'])
 def check_answer():
     if request.method == "POST":
         f = open('./file.wav', 'wb')
+        print(request)
         f.write(request.data)
         f.close()
         if os.path.isfile('./file.wav'):
@@ -72,7 +71,6 @@ def check_answer():
  
 # main driver function
 if __name__ == '__main__':
- 
     # run() method of Flask class runs the application
     # on the local development server.
     app.run(debug=True)
