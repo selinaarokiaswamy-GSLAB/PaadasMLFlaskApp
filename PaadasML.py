@@ -16,11 +16,31 @@ app.secret_key = "Sameer"
 # which tells the application which URL should call
 # the associated function.
 # ‘/’ URL is bound with index() function.
-@app.route('/')
+@app.route('/',  methods=['POST', 'GET'])
 def index():
-    session["number"] = random.randint(1,10)
-    session["times"] = random.randint(1,10)
-    return render_template("index.html", number=session["number"], times=session["times"])
+    print (request.method)
+    if request.method == "POST":
+        f = open('./file.wav', 'wb')
+        f.write(request.data)
+        f.close()
+        if os.path.isfile('./file.wav'):
+            print("./file.wav exists")
+        answer = session["number"] * session["times"]
+        # TODO: hook up to google recognition
+        # TODO: identify files to play depending on recorded and correct answer
+        # TODO: also pose the next problem
+        session["files"] = [ "./numbers/" + str(answer) + ".wav" ]
+        return render_template("index.html", answer = answer)
+    else:
+        session["number"] = random.randint(1,10)
+        session["times"] = random.randint(1,10)
+        files = []
+        number = session["number"]
+        files.append("./numbers/" + str(number) + ".wav")
+        times = session["times"]
+        files.append("./times/" + str(times) + ".wav")
+        session["files"] = files
+        return render_template("index.html", number=session["number"], times=session["times"])
 
 @app.route('/paadas')
 def paadas():
@@ -42,32 +62,7 @@ def paadas():
         buffer.seek(0)
         return buffer.read()
 
-    files = []
-    number = session["number"]
-    files.append("./numbers/" + str(number) + ".wav")
-    times = session["times"]
-    files.append("./times/" + str(times) + ".wav")
-    #data = dict(
-    #    file=(generate(files), "padaa.wav"),
-    #)
-
-    #app.post(url_for('static', filename='padaa.wav'), content_type='multipart/form-data', data=data)
-    return Response(generate(files), mimetype='audio/wav')
-    #return render_template("index.html", source=generate(files))
-
-@app.route("/recording", methods=['POST', 'GET'])
-def check_answer():
-    if request.method == "POST":
-        f = open('./file.wav', 'wb')
-        print(request)
-        f.write(request.data)
-        f.close()
-        if os.path.isfile('./file.wav'):
-            print("./file.wav exists")
-
-        return render_template('index.html', request="POST")   
-    else:
-        return render_template("index.html")
+    return Response(generate(session["files"]), mimetype='audio/wav')
  
 # main driver function
 if __name__ == '__main__':
