@@ -119,5 +119,10 @@ function sendAudioData(audioBlob) {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "http://127.0.0.1:5000/");
   xhr.setRequestHeader("Content-Type", "audio/wav")
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      document.write(xhr.responseText)
+    }
+  }
   xhr.send(audioBlob)
 }
