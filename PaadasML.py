@@ -30,7 +30,7 @@ def index():
         # TODO: identify files to play depending on recorded and correct answer
         # TODO: also pose the next problem
         session["files"] = [ "./numbers/" + str(answer) + ".wav" ]
-        return render_template("index.html", answer = answer)
+        return render_template("index.html", answer = answer, number=session["number"], times=session["times"], request = "GET")
     else:
         session["number"] = random.randint(1,10)
         session["times"] = random.randint(1,10)
