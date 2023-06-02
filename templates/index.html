@@ -6,20 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
-    <h1> पाढे उजळणी  </h1>
-    <!-- hook up to UI -->
-    {{ number }} X {{ times }} = {{ answer }}
-    <audio controls autoplay>
-      <source src="{{ url_for('paadas') }}" type="audio/wav">
-      Your browser does not support the audio element.
-    </audio>
+    <div align="center">
+      <h1> पाढे उजळणी  </h1>
+    </div>
 
-    <div> उत्तर 
+    <div align="center">
+      <audio controls autoplay>
+        <source src="{{ url_for('paadas') }}" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <div align="center">
+      <!-- hook up to UI -->
+      {{ number }} X {{ times }} = {{ answer }}
+    </div>
+
+    <div align="center"> उत्तर 
      <button id="recordButton">द्या</button>
      <button id="stopButton" disabled>तपासा</button>
     </div>
-    <!-- div id="formats">Format: start recording to see sample rate</div -->
- 
+
+    <div align="center">
+      <h3> गुण {{ correct }} / {{ total }} </h3>
+    </div>
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
     <script src="/static/js/app.js"></script>
