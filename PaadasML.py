@@ -6,12 +6,30 @@ import time
 import wave
 import io
 import os
+import uuid
+import speech_recognition as sr
 
 # Flask constructor takes the name of
 # current module (__name__) as argument.
 app = Flask(__name__)
 app.secret_key = "Sameer"
+
+transcription = []
+
+def load_transcription():
+    with open("marathi_number_transcription.txt") as file:
+        for line in file:
+            transcription.append(line.split())
  
+def pose_a_problem(files):
+    session["number"] = random.randint(1,10)
+    session["times"] = random.randint(1,10)
+    number = session["number"]
+    files.append("./numbers/" + str(number) + ".wav")
+    times = session["times"]
+    files.append("./times/" + str(times) + ".wav")
+    session["files"] = files
+
 # The route() function of the Flask class is a decorator,
 # which tells the application which URL should call
 # the associated function.
@@ -20,29 +38,64 @@ app.secret_key = "Sameer"
 def index():
     print (request.method)
     if request.method == "POST":
-        f = open('./file.wav', 'wb')
-        f.write(request.data)
-        f.close()
-        if os.path.isfile('./file.wav'):
-            print("./file.wav exists")
-        answer = session["number"] * session["times"]
-        # TODO: hook up to google recognition
-        # TODO: identify files to play depending on recorded and correct answer
-        # TODO: also pose the next problem
-        session["files"] = [ "./numbers/" + str(answer) + ".wav" ]
-        return render_template("index.html", answer = answer, number=session["number"], times=session["times"], request = "GET")
-    else:
-        session["number"] = random.randint(1,10)
-        session["times"] = random.randint(1,10)
-        files = []
-        number = session["number"]
-        files.append("./numbers/" + str(number) + ".wav")
-        times = session["times"]
-        files.append("./times/" + str(times) + ".wav")
-        session["files"] = files
-        return render_template("index.html", number=session["number"], times=session["times"])
+        correct_answer = session["number"] * session["times"]
+        if request.mimetype == "audio/wav":
+            file_name = "./samples/" + uuid.uuid4().hex + ".wav"
+            f = open(file_name, 'wb')
+            f.write(request.data)
+            f.close()
+            if os.path.isfile(file_name):
+                print(file_name + " created")
+            print("Recognizing the marathi number Now .... ")
+            f = sr.AudioFile(file_name)
+            r = sr.Recognizer()
+            with f as source:
+                audio = r.record(source)
 
-@app.route('/paadas')
+            user_answer = ""
+            try:
+                user_answer = r.recognize_google(audio, language="mr-IN")
+                print("You have said: " + user_answer)
+            except Exception as e:
+                print("Error :  " + str(e))
+
+            # check answer
+            number_transcriptions = []
+
+            if len(transcription) >= correct_answer:
+                number_transcriptions = transcription[correct_answer - 1]
+
+            is_correct = False
+
+            for s in number_transcriptions:
+                if s == user_answer:
+                    is_correct = True
+
+            files = []
+
+            if is_correct:
+                files.append("./prompt/correct.wav")
+            else:
+                # remove incorrect audio sample
+                os.remove(file_name)
+                files.append("./prompt/incorrect.wav")
+
+            # revise the problem
+            number = session["number"]
+            files.append("./numbers/" + str(number) + ".wav")
+            times = session["times"]
+            files.append("./times/" + str(times) + ".wav")
+            files.append("./numbers/" + str(correct_answer) + ".wav")
+
+            # also pose the next problem
+            pose_a_problem(files)
+            print("session['files'] = ", session["files"])
+    else:
+        pose_a_problem([])
+    
+    return render_template("index.html", number=session["number"], times=session["times"])
+
+@app.route('/paadas',  methods=['POST', 'GET'])
 def paadas():
     #Approach 2
     def generate(files):
@@ -50,7 +103,10 @@ def paadas():
             params = f.getparams()
             frames = f.readframes(f.getnframes())
         
+        print("in generate")
+
         for file in files[1:]:
+            print("file = ", file)
             with wave.open(file, 'rb') as f:
                 frames += f.readframes(f.getnframes())
         
@@ -66,6 +122,7 @@ def paadas():
  
 # main driver function
 if __name__ == '__main__':
+    load_transcription()
     # run() method of Flask class runs the application
     # on the local development server.
     app.run(debug=True)
