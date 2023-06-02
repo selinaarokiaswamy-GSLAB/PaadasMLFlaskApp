@@ -76,7 +76,10 @@ def index():
 
             files = []
 
+            session["total"] += 1
+
             if is_correct:
+                session["correct"] += 1
                 files.append("./prompt/correct.wav")
             else:
                 # remove incorrect audio sample
@@ -94,9 +97,12 @@ def index():
             pose_a_problem(files)
             print("session['files'] = ", session["files"])
     else:
+        session["correct"] = 0
+        session["total"] = 0
         pose_a_problem([])
     
-    return render_template("index.html", number=session["number"], times=session["times"])
+    return render_template("index.html", correct=session["correct"], total=session["total"], 
+                           number=session["number"], times=session["times"])
 
 @app.route('/paadas',  methods=['POST', 'GET'])
 def paadas():
@@ -125,6 +131,9 @@ def paadas():
  
 # main driver function
 if __name__ == '__main__':
+    correct = 0
+    total = 0
+    transcription = []
     load_transcription()
     # run() method of Flask class runs the application
     # on the local development server.
