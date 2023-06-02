@@ -40,7 +40,10 @@ def index():
     if request.method == "POST":
         correct_answer = session["number"] * session["times"]
         if request.mimetype == "audio/wav":
-            file_name = "./samples/" + uuid.uuid4().hex + ".wav"
+            folder = "./samples/" + str(correct_answer)
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            file_name =  folder + "/" + uuid.uuid4().hex + ".wav"
             f = open(file_name, 'wb')
             f.write(request.data)
             f.close()
