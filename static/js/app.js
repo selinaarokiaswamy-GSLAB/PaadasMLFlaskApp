@@ -9,89 +9,92 @@ var input;                          //MediaStreamAudioSourceNode we'll be record
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext //audio context to help us record
 
-var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
+initializeClickHandlers();
+function initializeClickHandlers() {
+    var recordButton = document.getElementById("recordButton");
+    var stopButton = document.getElementById("stopButton");
 
-//add events to those 2 buttons
-recordButton.addEventListener("click", startRecording);
-stopButton.addEventListener("click", stopRecording);
+    //add events to those 2 buttons
+    recordButton.addEventListener("click", startRecording);
+    stopButton.addEventListener("click", stopRecording);
 
-function startRecording() {
-    console.log("recordButton clicked");
-
-    /*
-        Simple constraints object, for more advanced audio features see
-        https://addpipe.com/blog/audio-constraints-getusermedia/
-    */
-
-    var constraints = { audio: true, video:false }
-
-    /*
-        Disable the record button until we get a success or fail from getUserMedia() 
-    */
-
-    recordButton.disabled = true;
-    stopButton.disabled = false;
-
-    /*
-        We're using the standard promise based getUserMedia() 
-        https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    */
-
-    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-        console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+    function startRecording() {
+        console.log("recordButton clicked");
 
         /*
-            create an audio context after getUserMedia is called
-            sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
-            the sampleRate defaults to the one set in your OS for your playback device
-
+            Simple constraints object, for more advanced audio features see
+            https://addpipe.com/blog/audio-constraints-getusermedia/
         */
-        audioContext = new AudioContext();
 
-        //update the format 
-        // document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
+        var constraints = { audio: true, video:false }
 
-        /*  assign to gumStream for later use  */
-        gumStream = stream;
-
-        /* use the stream */
-        input = audioContext.createMediaStreamSource(stream);
-
-        /* 
-            Create the Recorder object and configure to record mono sound (1 channel)
-            Recording 2 channels  will double the file size
+        /*
+            Disable the record button until we get a success or fail from getUserMedia() 
         */
-        rec = new Recorder(input,{numChannels:1})
 
-        //start the recording process
-        rec.record()
+        recordButton.disabled = true;
+        stopButton.disabled = false;
 
-        console.log("Recording started");
+        /*
+            We're using the standard promise based getUserMedia() 
+            https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+        */
 
-    }).catch(function(err) {
-        //enable the record button if getUserMedia() fails
-        recordButton.disabled = false;
+        navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+            console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+
+            /*
+                create an audio context after getUserMedia is called
+                sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+                the sampleRate defaults to the one set in your OS for your playback device
+
+            */
+            audioContext = new AudioContext();
+
+            //update the format 
+            // document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
+
+            /*  assign to gumStream for later use  */
+            gumStream = stream;
+
+            /* use the stream */
+            input = audioContext.createMediaStreamSource(stream);
+
+            /* 
+                Create the Recorder object and configure to record mono sound (1 channel)
+                Recording 2 channels  will double the file size
+            */
+            rec = new Recorder(input,{numChannels:1})
+
+            //start the recording process
+            rec.record()
+
+            console.log("Recording started");
+
+        }).catch(function(err) {
+            //enable the record button if getUserMedia() fails
+            recordButton.disabled = false;
+            stopButton.disabled = true;
+        });
+    }
+
+    function stopRecording() {
+        console.log("stopButton clicked");
+
+        //disable the stop button, enable the record too allow for new recordings
         stopButton.disabled = true;
-    });
-}
+        recordButton.disabled = false;
+    
 
-function stopRecording() {
-    console.log("stopButton clicked");
+        //tell the recorder to stop the recording
+        rec.stop();
 
-    //disable the stop button, enable the record too allow for new recordings
-    stopButton.disabled = true;
-    recordButton.disabled = false;
-   
+        //stop microphone access
+        gumStream.getAudioTracks()[0].stop();
 
-    //tell the recorder to stop the recording
-    rec.stop();
-
-    //stop microphone access
-    gumStream.getAudioTracks()[0].stop();
-
-    //create the wav blob and pass it to the server
-    rec.exportWAV(sendAudioData)
+        //create the wav blob and pass it to the server
+        rec.exportWAV(sendAudioData)
+    }
 }
 
 function sendAudioData(audioBlob) {
@@ -101,7 +104,8 @@ function sendAudioData(audioBlob) {
   xhr.setRequestHeader("Content-Type", "audio/wav")
   xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
-      document.write(xhr.responseText);
+      document.body.innerHTML = xhr.responseText;
+      initializeClickHandlers();
     }
   }
   xhr.send(audioBlob)
