@@ -29,3 +29,11 @@
 .line {
     border: 1px solid;
 }
+
+#recordButton, #stopButton {
+    font-size: 1.17em;
+}
+
+#stopButton {
+    margin-left: 5px;
+}
