@@ -1,0 +1,28 @@
+.main-container {
+    width: 100px;
+    margin: 5px auto 10px auto;
+}
+
+.box {
+    border: 1px solid;
+    width: 50px;
+}
+
+.sign {
+    text-align: left;
+    height: 25px;
+    line-height: 20px;
+}
+
+.sign > span {
+    zoom: 2;
+}
+
+.answer {
+    border: 2px solid;
+    height: 20px;
+}
+
+.line {
+    border: 1px solid;
+}
