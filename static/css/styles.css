@@ -1,0 +1,39 @@
+.main-container {
+    font-size: 1.5em;
+    font-weight: bold;
+    width: 110px;
+    margin: 5px auto 10px auto;
+}
+
+.box {
+    border: 1px solid;
+    width: 50px;
+    
+}
+
+.sign {
+    text-align: left;
+    height: 25px;
+    line-height: 23px;
+}
+
+.sign > span {
+    zoom: 2;
+}
+
+.answer {
+    border: 2px solid;
+    height: 20px;
+}
+
+.line {
+    border: 1px solid;
+}
+
+#recordButton, #stopButton {
+    font-size: 1.17em;
+}
+
+#stopButton {
+    margin-left: 5px;
+}
