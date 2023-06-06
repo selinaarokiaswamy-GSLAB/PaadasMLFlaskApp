@@ -15,6 +15,16 @@ app = Flask(__name__)
 app.secret_key = "Sameer"
 
 transcription = []
+enlish_to_marathi_dict = { '1':'१', '2':'२', '3':'३', '4':'४','5':'५','6':'६','7':'७','8':'८','9':'९','0':'०'}
+
+@app.template_filter('to_marathi')
+def to_marathi(input_number):
+    number_str = str(input_number)
+    marathi_number = ""
+
+    for digit in number_str:
+        marathi_number += enlish_to_marathi_dict.get(digit)
+    return marathi_number
 
 def load_transcription():
     with open("marathi_number_transcription.txt") as file:
