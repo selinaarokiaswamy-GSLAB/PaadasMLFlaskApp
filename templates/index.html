@@ -19,7 +19,7 @@
 
     <div align="center">
       <!-- hook up to UI -->
-      {{ number }} X {{ times }} = {{ answer }}
+      {{ number|to_marathi }} X {{ times|to_marathi }} = {{ answer|to_marathi }}
     </div>
 
     <div align="center"> उत्तर 
@@ -28,7 +28,7 @@
     </div>
 
     <div align="center">
-      <h3> गुण {{ correct }} / {{ total }} </h3>
+      <h3> गुण {{ correct|to_marathi }} / {{ total|to_marathi }} </h3>
     </div>
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
