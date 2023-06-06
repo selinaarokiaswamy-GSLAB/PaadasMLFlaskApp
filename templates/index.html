@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>PadaasML</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/styles.css">
   </head>
   <body>
     <div align="center">
@@ -19,7 +20,11 @@
 
     <div align="center">
       <!-- hook up to UI -->
-      <h2> {{ number|to_marathi }} X {{ times|to_marathi }} = {{ answer|to_marathi }} </h2>
+      <div class="box">{{ number|to_marathi }}</div> 
+      <div class="sign"><span>×</span></div> 
+      <div class="box">{{ times|to_marathi }}</div>
+      <hr class="line">
+      <div class="box answer">{{ answer|to_marathi }}</div>
     </div>
 
     <div align="center">
