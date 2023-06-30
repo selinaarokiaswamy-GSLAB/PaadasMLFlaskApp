@@ -100,7 +100,7 @@ function initializeClickHandlers() {
 function sendAudioData(audioBlob) {
   console.log("sending audio data");
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://127.0.0.1:5000/");
+  xhr.open("POST", "https://paadas-flask-app.onrender.com/");
   xhr.setRequestHeader("Content-Type", "audio/wav")
   xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
