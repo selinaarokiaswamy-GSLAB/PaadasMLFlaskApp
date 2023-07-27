@@ -224,9 +224,9 @@ def paadasReact():
         session["correct"] = 0
         session["total"] = 0
         pose_a_problem([])
-        
+    print(session._get_current_object())
     response = jsonify({'code': status.HTTP_200_OK,
-                        'message': jsonify(session)})
+                        'message': session._get_current_object()})
     return response
 
 # main driver function
