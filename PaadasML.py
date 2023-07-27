@@ -139,11 +139,11 @@ def paadas():
         
         buffer.seek(0)
         return buffer.read()
-    # response  = jsonify({'code': status.HTTP_200_OK,
-    #                 'message': Response(generate(session["files"]), mimetype='audio/wav')})
+    response  = jsonify({'code': status.HTTP_200_OK,
+                    'message': Response(generate(session["files"]), mimetype='audio/wav')})
 
-    # return Response(generate(session["files"]), mimetype='audio/wav')
-    return generate(session["files"])
+    return Response(generate(session["files"]), mimetype='audio/wav')
+    # return generate(session["files"])
 
 
 #APIs for REACT App
@@ -237,4 +237,4 @@ if __name__ == '__main__':
     load_transcription()
     # run() method of Flask class runs the application
     # on the local development server.
-    app.run(debug=True, host="192.168.0.103")
+    app.run(debug=True)
