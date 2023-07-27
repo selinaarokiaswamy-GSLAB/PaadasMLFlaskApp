@@ -226,7 +226,7 @@ def paadasReact():
         pose_a_problem([])
         
     response = jsonify({'code': status.HTTP_200_OK,
-                        'message': session})
+                        'message': jsonify(session)})
     return response
 
 # main driver function
